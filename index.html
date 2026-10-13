@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Client Onboarding Automation · Zoho workflow case study</title>
+<meta name="description" content="A no-code Zoho workflow: one intake form creates the CRM contact, emails a personalized welcome pack, and assigns onboarding tasks. Built by journey17x.">
+<meta property="og:title" content="Client Onboarding Automation">
+<meta property="og:description" content="Standardize intake first, then automate intake, welcome doc and task assignments with Zoho Forms, Flow, CRM, Writer and Projects.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232350d8'/%3E%3Cpath d='M8 16h6l3-6 3 12 3-6h3' stroke='white' stroke-width='2.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+img{max-width:100%}
+/* Layout: single reading column (~68ch) with wide breakout bands for the flow diagram and outputs; a run-log motif ties the page together. */
+:root{
+  --paper:#f2f4f3;
+  --surface:#ffffff;
+  --ink:#13201e;
+  --muted:#5b6865;
+  --line:#d5dcda;
+  --accent:#2350d8;
+  --accent-soft:#e3e9fb;
+  --merge:#a3570a;
+  --merge-soft:#fbefdf;
+  --ok:#1f7a4d;
+  --ok-soft:#e1f2e8;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0f1615; --surface:#17201f; --ink:#e7eeec; --muted:#9aa8a5; --line:#2a3634;
+    --accent:#8aa6ff; --accent-soft:#1c2647; --merge:#f0b067; --merge-soft:#3a2a15;
+    --ok:#6fd3a0; --ok-soft:#163327; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0f1615; --surface:#17201f; --ink:#e7eeec; --muted:#9aa8a5; --line:#2a3634;
+  --accent:#8aa6ff; --accent-soft:#1c2647; --merge:#f0b067; --merge-soft:#3a2a15;
+  --ok:#6fd3a0; --ok-soft:#163327; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:20px;padding-block:48px 72px;display:flex;flex-direction:column;gap:72px}
+.col{max-width:68ch}
+h1,h2,h3{font-family:var(--display);line-height:1.1;text-wrap:balance;margin:0}
+h1{font-size:clamp(2.4rem,6vw,4.2rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.6rem,3.2vw,2.2rem);font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.15rem;font-weight:700}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+section{display:flex;flex-direction:column;gap:20px}
+.lede{font-size:1.2rem;color:var(--muted);max-width:60ch}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:40px;align-items:end}
+.hero-text{display:flex;flex-direction:column;gap:20px;min-width:0}
+.stack{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-family:var(--mono);font-size:.8rem;padding:4px 10px;border:1px solid var(--line);border-radius:999px;background:var(--surface)}
+.outcome{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.outcome .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-variant-numeric:tabular-nums}
+.outcome .big{font-family:var(--display);font-size:2.4rem;font-weight:800;line-height:1}
+.outcome .before .big{color:var(--muted);text-decoration:line-through;text-decoration-thickness:3px}
+.outcome .after .big{color:var(--accent)}
+.outcome small{color:var(--muted);font-size:.85rem}
+.bar{height:8px;border-radius:4px;background:var(--line);overflow:hidden}
+.bar span{display:block;height:100%;background:var(--accent);width:14%}
+
+/* before list */
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.panel ol,.panel ul{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+.panel.after{border-color:var(--accent)}
+.tag{align-self:flex-start;font-family:var(--mono);font-size:.75rem;padding:2px 8px;border-radius:6px}
+.tag.bad{background:var(--merge-soft);color:var(--merge)}
+.tag.good{background:var(--accent-soft);color:var(--accent)}
+
+/* form fields */
+.fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
+.field{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:2px}
+.field b{font-weight:600}
+.field span{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+.req{color:var(--merge)}
+
+/* flow diagram */
+.flow-wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px}
+.flow{display:grid;grid-template-columns:repeat(7,minmax(128px,1fr));gap:0;min-width:920px;position:relative}
+.step{position:relative;display:flex;flex-direction:column;gap:8px;padding-right:18px}
+.step .node{display:flex;align-items:center;gap:8px}
+.dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-family:var(--mono);font-size:.8rem;font-weight:500;background:var(--accent-soft);color:var(--accent);flex:none;position:relative;z-index:1}
+.step:first-child .dot{background:var(--accent);color:var(--surface)}
+.step:not(:last-child)::after{content:"";position:absolute;top:13px;left:28px;right:0;height:2px;background:var(--line)}
+.app{font-family:var(--mono);font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.step h3{font-size:1rem}
+.step p{font-size:.88rem;color:var(--muted)}
+
+/* run log */
+.log{font-family:var(--mono);font-size:.85rem;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow-x:auto}
+.log table{border-collapse:collapse;width:100%;min-width:620px}
+.log th,.log td{text-align:left;padding:10px 16px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;white-space:nowrap}
+.log th{font-weight:500;color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em}
+.log tr:last-child td{border-bottom:none}
+.status{display:inline-flex;align-items:center;gap:6px;color:var(--ok);background:var(--ok-soft);padding:2px 8px;border-radius:6px}
+.log-head{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:14px 16px;border-bottom:1px solid var(--line)}
+
+/* outputs */
+.outputs{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:24px;align-items:start}
+.stackcol{display:flex;flex-direction:column;gap:24px;min-width:0}
+.doc{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:36px 34px;box-shadow:0 18px 40px -28px rgba(0,0,0,.35);display:flex;flex-direction:column;gap:14px;min-width:0}
+.doc h3{font-size:1.9rem;color:var(--accent);font-weight:800}
+.doc p{font-size:.95rem}
+.m{background:var(--merge-soft);color:var(--merge);border-radius:4px;padding:0 4px;font-weight:500}
+.doc .kv{display:flex;flex-direction:column;gap:4px}
+.doc h4{font-family:var(--display);font-size:1.1rem;margin:6px 0 0}
+.caption{font-size:.85rem;color:var(--muted)}
+.crm{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 16px;font-size:.92rem}
+.crm dt{color:var(--muted)}
+.crm dd{margin:0;overflow-wrap:anywhere}
+.tasks{display:flex;flex-direction:column}
+.task{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:.92rem}
+.task:first-of-type{border-top:none}
+.tid{font-family:var(--mono);font-size:.78rem;color:var(--muted)}
+.open{font-family:var(--mono);font-size:.75rem;background:var(--ok-soft);color:var(--ok);padding:2px 8px;border-radius:6px}
+
+/* mapping */
+.map{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+.map table{border-collapse:collapse;width:100%;min-width:560px;font-size:.92rem}
+.map th,.map td{padding:10px 16px;border-bottom:1px solid var(--line);text-align:left}
+.map th{font-family:var(--mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:500}
+.map tr:last-child td{border-bottom:none}
+.map code{font-family:var(--mono);font-size:.82rem}
+
+/* benefits */
+.benefits{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:24px}
+.benefit{display:flex;flex-direction:column;gap:6px;border-top:2px solid var(--ink);padding-top:14px}
+.benefit p{color:var(--muted);font-size:.95rem}
+
+footer{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid var(--line);padding-top:24px;color:var(--muted);font-size:.9rem}
+
+@media (max-width:760px){
+  .hero,.two,.outputs{grid-template-columns:minmax(0,1fr)}
+  .wrap{gap:56px;padding-block:32px 56px}
+  .doc{padding:26px 22px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .bar span{animation:grow 1.2s ease-out both}
+  @keyframes grow{from{width:100%}to{width:14%}}
+}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+
+  <header class="hero">
+    <div class="hero-text">
+      <span class="eyebrow">Portfolio · Zoho workflow automation</span>
+      <h1>Client Onboarding Automation</h1>
+      <p class="lede">Standardize intake first, then automate the hand-offs. One form submission creates the CRM record, emails a personalized welcome pack, and assigns the onboarding tasks.</p>
+      <div class="stack">
+        <span class="chip">Zoho Forms</span><span class="chip">Zoho Flow</span><span class="chip">Zoho CRM</span><span class="chip">Zoho Writer</span><span class="chip">Zoho Projects</span>
+      </div>
+      <p><a href="https://github.com/journey17x/client-onboarding-automation">View the setup on GitHub →</a></p>
+    </div>
+    <aside class="outcome" aria-label="Time per client">
+      <span class="eyebrow">Time per new client</span>
+      <div class="row before"><span class="big">3 hrs</span><small>manual process</small></div>
+      <div class="row after"><span class="big">25 min</span><small>with the workflow</small></div>
+      <div class="bar" aria-hidden="true"><span></span></div>
+      <small>The system work (record, document, tasks) finishes in about 3 seconds. The remaining time goes to the client.</small>
+    </aside>
+  </header>
+
+  <section>
+    <span class="eyebrow">The problem</span>
+    <h2>Every new client meant the same three hours of admin</h2>
+    <div class="two">
+      <div class="panel">
+        <span class="tag bad">Before</span>
+        <ol>
+          <li>Collect details over email and calls, in a different format each time</li>
+          <li>Re-type the client into the CRM</li>
+          <li>Copy last client's welcome doc, edit names and dates by hand</li>
+          <li>Export to PDF and email it</li>
+          <li>Create the project tasks from memory</li>
+          <li>Chase whatever was missing from the intake</li>
+        </ol>
+      </div>
+      <div class="panel after">
+        <span class="tag good">After</span>
+        <ol>
+          <li>Client fills in one standard intake form</li>
+          <li>Everything else happens automatically, in about 3 seconds</li>
+        </ol>
+        <p class="caption">No re-typing, no copy-paste errors, and no forgotten steps. Every client gets the same quality of onboarding.</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Step one · Standardize intake</span>
+    <h2>Automation only works when the input is predictable</h2>
+    <p class="col">Before automating anything, I replaced free-form emails with a single intake form. Required fields stop onboarding from starting with gaps, and the service package is a fixed list so every downstream step can rely on it.</p>
+    <div class="fields">
+      <div class="field"><b>Name <span class="req">*</span></b><span>first + last</span></div>
+      <div class="field"><b>Email <span class="req">*</span></b><span>CRM match key</span></div>
+      <div class="field"><b>Phone <span class="req">*</span></b><span>CRM contact</span></div>
+      <div class="field"><b>Company name <span class="req">*</span></b><span>names the task list</span></div>
+      <div class="field"><b>Website</b><span>optional</span></div>
+      <div class="field"><b>Service package <span class="req">*</span></b><span>Starter · Growth · Enterprise</span></div>
+      <div class="field"><b>Preferred start date <span class="req">*</span></b><span>dd-MMM-yyyy</span></div>
+      <div class="field"><b>Project goals <span class="req">*</span></b><span>quoted in welcome pack</span></div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Step two · Automate the hand-offs</span>
+    <h2>Seven steps, triggered by one submission</h2>
+    <div class="flow-wrap">
+      <div class="flow">
+        <div class="step"><div class="node"><span class="dot">1</span></div><span class="app">Zoho Forms</span><h3>Intake submitted</h3><p>Trigger: new form entry</p></div>
+        <div class="step"><div class="node"><span class="dot">2</span></div><span class="app">Zoho CRM</span><h3>Create or update contact</h3><p>Matched on email, so no duplicates</p></div>
+        <div class="step"><div class="node"><span class="dot">3</span></div><span class="app">Zoho Writer</span><h3>Merge &amp; email welcome pack</h3><p>Personalized PDF sent to the client</p></div>
+        <div class="step"><div class="node"><span class="dot">4</span></div><span class="app">Zoho Projects</span><h3>Create task list</h3><p>“Onboarding – {Company}”</p></div>
+        <div class="step"><div class="node"><span class="dot">5</span></div><span class="app">Zoho Projects</span><h3>Review intake responses</h3><p>Assigned to account manager</p></div>
+        <div class="step"><div class="node"><span class="dot">6</span></div><span class="app">Zoho Projects</span><h3>Schedule kickoff call</h3><p>Assigned to account manager</p></div>
+        <div class="step"><div class="node"><span class="dot">7</span></div><span class="app">Zoho Projects</span><h3>Set up workspace access</h3><p>Assigned to account manager</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Live run</span>
+    <h2>A real run, step by step</h2>
+    <p class="col">Run history from Zoho Flow for a test client, Ananya Rao of Bluepeak Consulting (sample data). Every step completed within the same few seconds.</p>
+    <div class="log">
+      <div class="log-head"><span>Client Onboarding Automation · 13 Oct 2026</span><span class="status">● Completed · 3 s</span></div>
+      <table>
+        <thead><tr><th>Step</th><th>App</th><th>Action</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Zoho Forms</td><td>Form entry submitted</td><td><span class="status">✓ done</span></td></tr>
+          <tr><td>2</td><td>Zoho CRM</td><td>Create or update contact</td><td><span class="status">✓ done</span></td></tr>
+          <tr><td>3</td><td>Zoho Writer</td><td>Merge and email document</td><td><span class="status">✓ done</span></td></tr>
+          <tr><td>4</td><td>Zoho Projects</td><td>Create task list</td><td><span class="status">✓ done</span></td></tr>
+          <tr><td>5</td><td>Zoho Projects</td><td>Create task · Review intake responses</td><td><span class="status">✓ done</span></td></tr>
+          <tr><td>6</td><td>Zoho Projects</td><td>Create task · Schedule kickoff call</td><td><span class="status">✓ done</span></td></tr>
+          <tr><td>7</td><td>Zoho Projects</td><td>Create task · Set up client workspace access</td><td><span class="status">✓ done</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">What the run produced</span>
+    <h2>The client gets a welcome pack. The team gets a record and a checklist.</h2>
+    <div class="outputs">
+      <div class="stackcol">
+        <article class="doc" aria-label="Welcome pack sent to the client">
+          <h3>Welcome aboard, <span class="m">Ananya</span>!</h3>
+          <p>Thank you for choosing us. This welcome pack confirms the onboarding details for <span class="m">Bluepeak Consulting</span>.</p>
+          <div class="kv">
+            <p>Service package: <span class="m">Enterprise</span></p>
+            <p>Kickoff date: <span class="m">09-Nov-2026</span></p>
+            <p>Your goals: <span class="m">Standardize our sales process, migrate client data into one CRM, and train the team before the new quarter.</span></p>
+          </div>
+          <h4>What happens next</h4>
+          <p>Your account manager will contact you within one business day to schedule a kickoff call.</p>
+          <p>You will receive access to your shared project workspace, where your onboarding tasks are already set up.</p>
+          <p>At kickoff, we will review your goals together and confirm your first milestones.</p>
+        </article>
+        <p class="caption">Welcome Pack – Bluepeak Consulting.pdf, emailed seconds after submission. Highlighted text comes from the intake form through Writer merge fields.</p>
+      </div>
+      <div class="stackcol">
+        <div class="panel">
+          <span class="eyebrow">Zoho CRM · Contact</span>
+          <h3>Ananya Rao</h3>
+          <dl class="crm">
+            <dt>Email</dt><dd>from intake form</dd>
+            <dt>Phone</dt><dd>from intake form</dd>
+            <dt>Department</dt><dd>Bluepeak Consulting</dd>
+            <dt>Tag</dt><dd>Onboarding</dd>
+            <dt>Owner</dt><dd>Account manager</dd>
+          </dl>
+        </div>
+        <div class="panel">
+          <span class="eyebrow">Zoho Projects · Task list</span>
+          <h3>Onboarding – Bluepeak Consulting</h3>
+          <div class="tasks">
+            <div class="task"><span class="tid">CO1-T10</span><span>Review intake responses</span><span class="open">Open</span></div>
+            <div class="task"><span class="tid">CO1-T11</span><span>Schedule kickoff call</span><span class="open">Open</span></div>
+            <div class="task"><span class="tid">CO1-T12</span><span>Set up client workspace access</span><span class="open">Open</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Under the hood</span>
+    <h2>Field mapping</h2>
+    <p class="col">Each step is a mapping from intake answers to the next app. Nothing is typed twice.</p>
+    <div class="map">
+      <table>
+        <thead><tr><th>Intake field</th><th>Zoho CRM</th><th>Zoho Writer merge field</th><th>Zoho Projects</th></tr></thead>
+        <tbody>
+          <tr><td>First / Last name</td><td><code>First_Name</code>, <code>Last_Name</code></td><td><code>«First Name»</code></td><td>–</td></tr>
+          <tr><td>Email</td><td><code>Email</code> (match key)</td><td>Recipient address</td><td>–</td></tr>
+          <tr><td>Phone</td><td><code>Phone</code></td><td>–</td><td>–</td></tr>
+          <tr><td>Company name</td><td><code>Department</code></td><td><code>«Company Name»</code>, PDF file name</td><td>Task list name</td></tr>
+          <tr><td>Service package</td><td>–</td><td><code>«Service Package»</code></td><td>–</td></tr>
+          <tr><td>Preferred start date</td><td>–</td><td><code>«Start Date»</code></td><td>–</td></tr>
+          <tr><td>Project goals</td><td>–</td><td><code>«Project Goals»</code></td><td>–</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <span class="eyebrow">Why it helps</span>
+    <h2>What changed for the team</h2>
+    <div class="benefits">
+      <div class="benefit"><h3>Consistency</h3><p>Every client goes through the same intake, gets the same welcome pack, and gets the same checklist.</p></div>
+      <div class="benefit"><h3>Accuracy</h3><p>Details are entered once, by the client. No re-typing means no copy-paste mistakes.</p></div>
+      <div class="benefit"><h3>Visibility</h3><p>Each client has their own task list, so anyone can see where an onboarding stands.</p></div>
+      <div class="benefit"><h3>Scale</h3><p>One client or fifty takes the same effort. The workflow runs the same way every time.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <span>Built in Zoho Forms, Flow, CRM, Writer and Projects. Client data shown is sample data.</span>
+    <a href="https://github.com/journey17x" target="_blank" rel="noopener">github.com/journey17x</a>
+  </footer>
+</div>
+
+</body>
+</html>
